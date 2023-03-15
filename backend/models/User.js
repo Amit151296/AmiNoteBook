@@ -4,10 +4,10 @@ const mongoose=require("mongoose")
 const { Schema } = mongoose;
 
 const usersSchema= new Schema({
-    userName:{
+    username:{
         type:String,
         required:true,
-        unique:true,
+        // unique:true,
     },
     password:{
         type:String,
