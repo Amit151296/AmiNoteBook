@@ -5,7 +5,10 @@ var bcrypt = require('bcryptjs');
 const { body, validationResult } = require('express-validator');
 const jwt = require('jsonwebtoken');
 const JWT_SECRET="A@m#it15$%#"
+const fetchUser=require("../middleware/fetchuser")
 //create a user POST -api/auth/createuser Not need of authentication. 
+
+//Route 1 :- Create user Method POST 
 routes.post('/createUser',
    [
     body('username',"Please Enter valid user Name").isLength({min:3}),
@@ -48,12 +51,13 @@ routes.post('/createUser',
     
 })
 
+//Route 2 :- login user Method POST 
 //login endpoint method -POST
 routes.post('/login',async (req, res) => {
     
   const {email,password}=req.body
   try {
-      //Not Allow 1) Email id not in Database 2) password is incorrect.
+      //Not Allow in there 2 case :- 1) Email id not in Database 2) password is incorrect.
       const user =await User.findOne({"email":email})
       const comparePass = await bcrypt.compare(password,user.password)
       if (!user || !comparePass){
@@ -68,5 +72,19 @@ routes.post('/login',async (req, res) => {
       return res.status(500).json({"error":error.message})
     }
 })
+
+
+//Route 3 :- Get the user details (Login required)
+// Method POST :- api/auth/getuser
+routes.get('/getUser',fetchUser,async(req, res) => {
+    const userId=req._id
+    const user = await User.findById(userId).select("-password")
+    if(!user){
+      return res.status(500).json({"error":error.message})
+    }
+    return res.status(200).json({"success":user}) 
+})
+
+
 
 module.exports=routes
