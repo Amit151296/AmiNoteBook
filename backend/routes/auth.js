@@ -48,4 +48,25 @@ routes.post('/createUser',
     
 })
 
+//login endpoint method -POST
+routes.post('/login',async (req, res) => {
+    
+  const {email,password}=req.body
+  try {
+      //Not Allow 1) Email id not in Database 2) password is incorrect.
+      const user =await User.findOne({"email":email})
+      const comparePass = await bcrypt.compare(password,user.password)
+      if (!user || !comparePass){
+        return res.status(401).json({"Authentication Error":"Please Authenticate with correct credential"})
+      }
+        //generating authentication token with the help of JWT
+        const data={"_id":user._id}
+        const authToken = jwt.sign(data, JWT_SECRET);
+        return res.status(200).json({"success":authToken})
+
+    } catch (error) {
+      return res.status(500).json({"error":error.message})
+    }
+})
+
 module.exports=routes
