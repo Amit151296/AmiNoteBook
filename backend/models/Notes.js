@@ -1,7 +1,11 @@
-import mongoose from 'mongoose';
+const mongoose=require("mongoose")
 const { Schema } = mongoose;
 
-const usersSchema= new Schema({
+const notesSchema= new Schema({
+    user: {
+        type:mongoose.Schema.Types.ObjectId,
+        ref :"User"
+    },
     title:{
         type:String,
         required:true,
@@ -21,4 +25,4 @@ const usersSchema= new Schema({
 
 });
 
-module.exports=mongoose.model("User",usersSchema)
+module.exports=mongoose.model("Notes",notesSchema)

@@ -76,11 +76,13 @@ routes.post('/login',async (req, res) => {
 
 //Route 3 :- Get the user details (Login required)
 // Method POST :- api/auth/getuser
-routes.get('/getUser',fetchUser,async(req, res) => {
+routes.get('/getuser',fetchUser,async(req, res) => {
     const userId=req._id
-    const user = await User.findById(userId).select("-password")
+    // const user = await User.findById(userId).select("-password")
+    // const user = await User.find({"_id":userId}).select("-password")
+    const user = await User.findOne({"_id":userId}).select("-password")
     if(!user){
-      return res.status(500).json({"error":error.message})
+      return res.status(500).json({"error":"Some error occurs"})
     }
     return res.status(200).json({"success":user}) 
 })
