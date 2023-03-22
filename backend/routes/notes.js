@@ -49,6 +49,37 @@ routes.post('/addnotes', fetchUser,
     }
 
   })
+//Update the user notes  PUT :- api/notes/updatenotes (login required)
+routes.put('/updatenotes/:id',fetchUser,async (req, res) => {
+
+    try {
+      const userId = req._id
+      const id=req.params.id
+      const note=await Notes.findById(id)
+      //If invaild id then will send not found error
+      if(!note){
+        res.status(404).send("No Notes found")
+      }
+
+      //validating same person wants to access there note only
+      if (note.user.toString() != userId){
+        res.status(401).send("Not Allow")
+      }
+
+      const {title,description,tag}=req.body
+      const updatedNotes={}
+      if(title && title.length>3){updatedNotes.title=title}
+      if(description && description.length>5)(updatedNotes.description=description)
+      if(tag)(updatedNotes.tag=tag)
+      newNote=await Notes.findByIdAndUpdate(id,{$set:updatedNotes},{new:true})
+      return res.status(200).json({ "success": newNote})
+      //inserting data into Notes
+    
+    } catch (error) {
+      return res.status(500).json(error.message)
+    }
+
+  })
 
 
 module.exports = routes
